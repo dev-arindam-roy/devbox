@@ -1,0 +1,69 @@
+.navbg {
+    background-color:rgb(10 113 185);
+}
+.box-title {
+    font-weight: bold;
+    font-size: 16px;
+}
+.form-lebel {
+    font-weight: 600;
+    color: #afafaf;
+}
+.form-lebel em {
+    color:#e20808;
+    font-weight: 700;
+}
+.text-option-bold {
+    font-weight: 600;
+    font-size: 14px;
+}
+.base-green {
+    color: #38c172;
+}
+.base-red {
+    color: #e3342f;
+}
+.box-post-title {
+    font-weight: bold;
+    font-size: 14px;
+    color: #0a71b9;
+}
+.post-box-content img {
+    max-width: 100%;
+}
+.box-post-catname {
+    font-size: 11px;
+    color: #5a5a5a;
+}
+.box-post-catname:hover {
+    cursor: pointer;
+    color: rgb(10 113 185);
+}
+.post-box-content iframe {
+    width: 400px;
+    height: 275px;
+    border: 5px solid #ddd;
+}
+span.keywords {
+    font-size: 10px !important;
+    font-weight: normal !important;
+}
+span.keywords:hover {
+    cursor: pointer;
+    background-color: yellowgreen;
+    color: #000;
+}
+.post-footer-dt {
+    color: #bbb6b6;
+    font-size: 10px;
+}
+ul.pagination {
+    width: 100%;
+    overflow-x: auto;
+}
+.ql-syntax {
+    background-color: #23241f;
+    color: #f8f8f2;
+    padding: 10px;
+    border-radius: 5px;
+}

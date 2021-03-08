@@ -50,6 +50,13 @@ Route::name('keyword.')->group(function () {
     });
 });
 
+// TASKS
+Route::name('task.')->group(function () {
+    Route::group(['prefix' => 'tasks'], function() {
+        Route::post('/add', [ApiController::class, 'createTask'])->name('add');
+    });
+});
+
 // DASHBOARD
 Route::name('dash.')->group(function () {
     Route::group(['prefix' => 'dashboard'], function() {

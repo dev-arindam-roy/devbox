@@ -11,7 +11,10 @@ import _myCategoryListComponent from '../components/pages/myCategoryListComponen
 import _addEditCategoryComponent from '../components/pages/addEditCategoryComponent.vue'
 
 import _myKeywordListComponent from '../components/pages/myKeywordListComponent.vue'
+
 import _myTaskListComponent from '../components/pages/myTaskListComponent.vue'
+import _addTaskComponent from '../components/pages/addTaskComponent.vue'
+
 import _myNoteListComponent from '../components/pages/myNoteListComponent.vue'
 
 import _404Component from '../components/pages/404Component.vue'
@@ -50,6 +53,8 @@ const webRoutes = new VueRouter({
             name: 'editPostBoxRoute',
         },
 
+
+
         {
             path: '/my-categories',
             component: _myCategoryListComponent,
@@ -66,15 +71,25 @@ const webRoutes = new VueRouter({
             name: 'editCategoryRoute',
         },
 
+
+
         {
             path: '/my-keywords',
             component: _myKeywordListComponent,
             name: 'myKeywordListRoute',
         },
+
+
+
         {
             path: '/my-tasks',
             component: _myTaskListComponent,
             name: 'myTaskListRoute',
+        },
+        {
+            path: '/my-tasks/add',
+            component: _addTaskComponent,
+            name: 'addTaskRoute',
         },
         {
             path: '/my-notes',

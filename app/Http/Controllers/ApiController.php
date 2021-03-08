@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Traits\ApiHelperTrait as ApiHelper;
 use App\Models\Categories;
 use App\Models\PostBoxes;
+use App\Models\SubTask;
+use App\Models\Task;
 use Carbon\Carbon;
 
 class ApiController extends Controller
@@ -465,6 +467,51 @@ class ApiController extends Controller
         $responseArr['content'] = [
             'keywords' => $keyWords
         ];
+        return response()->json($responseArr, 200);
+    }
+
+    public function createTask(Request $request)
+    {
+        $rules = [
+            'taskName' => ['required']
+        ];
+        $messages = [
+            'taskName.required' => 'Task name is required'
+        ];
+        $validation = $this->checkInputValidation($request->all(), $rules, $messages);
+        if (!empty($validation)) {
+            return response()->json($validation, $validation['status']);
+        }
+
+        $responseArr = [];
+        $userId = 1;
+        
+        $task = new Task;
+        $task->user_id = $userId;
+        $task->name = $request->input('taskName');
+        if ($task->save()) {
+            if ($request->has('subTasks') && !empty($request->input('subTasks'))) {
+                $subTasks = $request->input('subTasks');
+                $subTasksArr = [];
+                foreach ($subTasks as $v) {
+                    if ($v['name'] != '') {
+                        $arr = [];
+                        $arr['task_id'] = $task->id;
+                        $arr['name'] = $v['name'];
+                        $arr['description'] = $v['description'];
+                        array_push($subTasksArr, $arr);
+                    }
+                }
+                if (!empty($subTasksArr)) {
+                    SubTask::insert($subTasksArr);
+                }
+            }
+        }
+
+        $responseArr['status'] = 200;
+        $responseArr['type'] = 'success';
+        $responseArr['msg'] = 'Task has been created successfully';
+        $responseArr['content'] = [];
         return response()->json($responseArr, 200);
     }
 

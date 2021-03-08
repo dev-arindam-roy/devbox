@@ -6,11 +6,11 @@
             <router-link :to="{name : 'addCategoryRoute'}" class="list-group-item list-group-item-action text-option-bold">Add Category</router-link>
         </div>
         <div class="list-group">
-            <router-link :to="{name : 'myPostBoxesRoute'}" class="list-group-item list-group-item-action text-option-bold">Post Boxes <span class="badge badge-primary navbg badge-pill float-right" v-text="postBoxCount"></span></router-link>
-            <router-link :to="{name : 'myCategoryListRoute'}" class="list-group-item list-group-item-action text-option-bold">Categories <span class="badge badge-primary navbg badge-pill float-right" v-text="categoryCount"></span></router-link>
-            <router-link :to="{name : 'myKeywordListRoute'}" class="list-group-item list-group-item-action text-option-bold">Keywords <span class="badge badge-primary navbg badge-pill float-right" v-text="keywordCount"></span></router-link>
-            <router-link :to="{name : 'myTaskListRoute'}" class="list-group-item list-group-item-action text-option-bold">Tasks <span class="badge badge-primary navbg badge-pill float-right" v-text="taskCount"></span></router-link>
-            <router-link :to="{name : 'myNoteListRoute'}" class="list-group-item list-group-item-action text-option-bold">Notes <span class="badge badge-primary navbg badge-pill float-right" v-text="noteCount"></span></router-link>
+            <router-link :to="{name : 'myPostBoxesRoute'}" class="list-group-item list-group-item-action text-option-bold">Post Boxes <span class="badge badge-primary navbg badge-pill float-right" v-text="$props.postBoxCount"></span></router-link>
+            <router-link :to="{name : 'myCategoryListRoute'}" class="list-group-item list-group-item-action text-option-bold">Categories <span class="badge badge-primary navbg badge-pill float-right" v-text="$props.categoryCount"></span></router-link>
+            <router-link :to="{name : 'myKeywordListRoute'}" class="list-group-item list-group-item-action text-option-bold">Keywords <span class="badge badge-primary navbg badge-pill float-right" v-text="$props.keywordCount"></span></router-link>
+            <router-link :to="{name : 'myTaskListRoute'}" class="list-group-item list-group-item-action text-option-bold">Tasks <span class="badge badge-primary navbg badge-pill float-right" v-text="$props.taskCount"></span></router-link>
+            <router-link :to="{name : 'myNoteListRoute'}" class="list-group-item list-group-item-action text-option-bold">Notes <span class="badge badge-primary navbg badge-pill float-right" v-text="$props.noteCount"></span></router-link>
         </div>
     </div>
 </template>

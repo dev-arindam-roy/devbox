@@ -26,7 +26,7 @@
                         <!-- <sidebar-menu></sidebar-menu> -->
                     </div>
                     <div class="col-md-9">
-                        <router-view></router-view>
+                        <router-view :key="$route.path"></router-view>
                         <!-- <router-view name="boxpost"></router-view> -->
                     </div>
                 </div>

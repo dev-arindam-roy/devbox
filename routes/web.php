@@ -53,7 +53,14 @@ Route::name('keyword.')->group(function () {
 // TASKS
 Route::name('task.')->group(function () {
     Route::group(['prefix' => 'tasks'], function() {
+        Route::get('/', [ApiController::class, 'getAllTasks'])->name('all');
+        Route::get('/view/{id}', [ApiController::class, 'getTaskInfo'])->name('view');
         Route::post('/add', [ApiController::class, 'createTask'])->name('add');
+        Route::post('/status', [ApiController::class, 'changeStatus'])->name('status');
+        Route::post('/subtask-status', [ApiController::class, 'changeSubTaskStatus'])->name('subtaskStatus');
+        Route::post('/delete', [ApiController::class, 'deleteTask'])->name('delete');
+        Route::post('/bulkDelete', [ApiController::class, 'bulkDeleteTask'])->name('bulkDelete');
+        Route::post('/update/{id}', [ApiController::class, 'updateTask'])->name('update');
     });
 });
 

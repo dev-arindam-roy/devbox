@@ -13,7 +13,8 @@ import _addEditCategoryComponent from '../components/pages/addEditCategoryCompon
 import _myKeywordListComponent from '../components/pages/myKeywordListComponent.vue'
 
 import _myTaskListComponent from '../components/pages/myTaskListComponent.vue'
-import _addTaskComponent from '../components/pages/addTaskComponent.vue'
+import _addEditTaskComponent from '../components/pages/addEditTaskComponent.vue'
+import _myTaskViewComponent from '../components/pages/myTaskViewComponent.vue'
 
 import _myNoteListComponent from '../components/pages/myNoteListComponent.vue'
 
@@ -88,9 +89,21 @@ const webRoutes = new VueRouter({
         },
         {
             path: '/my-tasks/add',
-            component: _addTaskComponent,
+            component: _addEditTaskComponent,
             name: 'addTaskRoute',
         },
+        {
+            path: '/my-tasks/edit/:id',
+            component: _addEditTaskComponent,
+            name: 'editTaskRoute',
+        },
+        {
+            path: '/my-task/view/:id',
+            component: _myTaskViewComponent,
+            name: 'viewTaskRoute'
+        },
+
+
         {
             path: '/my-notes',
             component: _myNoteListComponent,
@@ -101,6 +114,11 @@ const webRoutes = new VueRouter({
         {
             path: '*',
             name: '404',
+            component: _404Component
+        },
+        {
+            path: '/404',
+            name: 'notfound',
             component: _404Component
         }
     ]

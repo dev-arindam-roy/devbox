@@ -6,6 +6,11 @@
         <meta name="csrf-token" content="{{ csrf_token() }}" />
         <link rel="icon" href="/images/devbox_fav.png" type="image/png" sizes="16x16">
         <title>DevBox</title>
+        <style>
+            [v-cloak] {
+                display: none !important;
+            }
+        </style>
         <link rel="stylesheet" href="{{ mix('css/app.css') }}">
         <link rel="stylesheet" href="{{ mix('css/custom.css') }}">
         <link rel="stylesheet" href="{{ asset('assets/fontawesome/css/all.min.css') }}">

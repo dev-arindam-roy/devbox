@@ -36,7 +36,7 @@
                             <div class="col-md-6 text-right" v-if="post.category_name"><span class="box-post-catname" @click="searchByCategory(post.category_id)">{{post.category_name}} <i class="fas fa-angle-double-left"></i></span></div>
                         </div>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body" style="background-color: #fdfde6;">
                         <div class="post-box-content" v-html="post.box_content"></div>
                     </div>
                     <div class="card-footer">
@@ -197,7 +197,7 @@ export default {
                     let index = _this.postBoxList.data.indexOf(postBoxObj);
                     _this.postBoxList.data.splice(index, 1);
                     _this.postBoxList.total--;
-                    _this.$root.sidebarCount.postBoxCount--;
+                    _this.$root.getCounts();
                 }
             })
             .catch(function (error) {

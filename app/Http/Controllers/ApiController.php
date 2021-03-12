@@ -317,7 +317,7 @@ class ApiController extends Controller
         $postbox->delete();
         $responseArr['status'] = 200;
         $responseArr['type'] = 'success';
-        $responseArr['msg'] = "PostBox deleted successfully";
+        $responseArr['msg'] = "PostBox has been deleted successfully";
         $responseArr['content'] = [];
         return response()->json($responseArr, 200);
     }
@@ -418,13 +418,16 @@ class ApiController extends Controller
             }
         }
         $uniqueKeywords = array_unique($keywordsArr);
+
+        $tasksCount = Task::where('status', '!=', 1)->count();
         $responseArr['status'] = 200;
         $responseArr['type'] = 'success';
         $responseArr['msg'] = '';
         $responseArr['content'] = [
             'categoryCount' => $categoryCount,
             'postBoxCount' => $postBoxCount,
-            'keywordCount' => count($uniqueKeywords)
+            'keywordCount' => count($uniqueKeywords),
+            'tasksCount' => $tasksCount
         ];
         return response()->json($responseArr, 200);
     }
@@ -470,6 +473,42 @@ class ApiController extends Controller
         return response()->json($responseArr, 200);
     }
 
+    /** TASK */
+
+    public function getAllTasks(Request $request)
+    {
+        $responseArr = [];
+        $userId = 1;
+        $allTasks = Task::where('user_id', $userId)->orderBy('id', 'desc');
+        if ($request->has('taskName') && $request->get('taskName') != '') {
+            $allTasks = $allTasks->where('name', 'LIKE', '%' . $request->get('taskName') . '%');
+        }
+        if ($request->has('status') && is_array($request->get('status')) && !empty($request->get('status'))) {
+            $allTasks = $allTasks->whereIn('status', $request->get('status'));
+        } else if ($request->has('status') && !is_array($request->get('status')) && $request->get('status') != '') {
+            $allTasks = $allTasks->where('status', $request->get('status'));
+        } else {
+            $allTasks = $allTasks->where('status', '!=', 1);
+        }
+        if ($request->has('pagination') && $request->get('pagination') != '' && $request->get('pagination') != 0) {
+            $allTasks = $allTasks->paginate($request->get('pagination'));
+        } else {
+            $allTasks = $allTasks->get();
+        }
+        $subTaskCount = [];
+        foreach ($allTasks as $tsk) {
+            $subTaskCount[$tsk->id] = !empty($tsk->subTasks) ? count($tsk->subTasks) : 0;
+        }
+        $responseArr['status'] = 200;
+        $responseArr['type'] = 'success';
+        $responseArr['msg'] = 'My Tasks';
+        $responseArr['content'] = [
+            'myTaskList' => $allTasks,
+            'subTaskCount' => $subTaskCount
+        ];
+        return response()->json($responseArr, 200);
+    }
+
     public function createTask(Request $request)
     {
         $rules = [
@@ -498,7 +537,7 @@ class ApiController extends Controller
                         $arr = [];
                         $arr['task_id'] = $task->id;
                         $arr['name'] = $v['name'];
-                        $arr['description'] = $v['description'];
+                        $arr['description'] = $v['description'] ?? '';
                         array_push($subTasksArr, $arr);
                     }
                 }
@@ -511,6 +550,128 @@ class ApiController extends Controller
         $responseArr['status'] = 200;
         $responseArr['type'] = 'success';
         $responseArr['msg'] = 'Task has been created successfully';
+        $responseArr['content'] = [];
+        return response()->json($responseArr, 200);
+    }
+
+    public function deleteTask(Request $request)
+    {
+        $responseArr = [];
+        $task = Task::find($request->input('taskId'));
+        $task->delete();
+        SubTask::where('task_id', $request->input('taskId'))->delete();
+        $responseArr['status'] = 200;
+        $responseArr['type'] = 'success';
+        $responseArr['msg'] = "Task has been deleted successfully";
+        $responseArr['content'] = [];
+        return response()->json($responseArr, 200);
+    }
+
+    public function bulkDeleteTask(Request $request)
+    {
+        $responseArr = [];
+        if ($this->bulkDelete('tasks', $request->input('ids'))) {
+            SubTask::whereIn('task_id', $request->input('ids'))->delete();
+            $responseArr['status'] = 200;
+            $responseArr['type'] = 'success';
+            $responseArr['msg'] = "Tasks has been deleted successfully";
+            $responseArr['content'] = [];
+        }
+        return response()->json($responseArr, 200);
+    }
+
+    public function changeStatus(Request $request)
+    {
+        $responseArr = [];
+        $task = Task::find($request->input('id'));
+        if (!empty($task)) {
+            $task->status = $request->input('status');
+            $task->save();
+        }
+        $responseArr['status'] = 200;
+        $responseArr['type'] = 'success';
+        $responseArr['msg'] = "Task status has been changed successfully";
+        $responseArr['content'] = [];
+        return response()->json($responseArr, 200);
+    }
+
+    public function getTaskInfo(Request $request, $id)
+    {
+        $responseArr = [];
+        $responseArr['status'] = 404;
+        $userId = 1;
+        $task = Task::where('id', $id)->where('user_id', $userId)->first();
+        if (!empty($task)) {
+            $task->description = trim(html_entity_decode(trim($task->description), ENT_QUOTES));
+            $subTasks = SubTask::where('task_id', $id)->orderBy('id', 'asc')->get();
+            $responseArr['status'] = 200;
+            $responseArr['type'] = 'success';
+            $responseArr['msg'] = 'Task info';
+            $responseArr['content'] = [
+                'taskInfo' => $task,
+                'subTasksInfo' => $subTasks
+            ];
+        }
+        return response()->json($responseArr, $responseArr['status']);
+    }
+
+    public function changeSubTaskStatus(Request $request)
+    {
+        $responseArr = [];
+        $subtask = SubTask::find($request->input('id'));
+        if (!empty($subtask)) {
+            $subtask->status = $request->input('status');
+            $subtask->save();
+        }
+        $responseArr['status'] = 200;
+        $responseArr['type'] = 'success';
+        $responseArr['msg'] = "SubTask status has been changed successfully";
+        $responseArr['content'] = [];
+        return response()->json($responseArr, 200);
+    }
+
+    public function updateTask(Request $request, $id)
+    {
+        $rules = [
+            'taskName' => ['required']
+        ];
+        $messages = [
+            'taskName.required' => 'Task name is required'
+        ];
+        $validation = $this->checkInputValidation($request->all(), $rules, $messages);
+        if (!empty($validation)) {
+            return response()->json($validation, $validation['status']);
+        }
+
+        $responseArr = [];
+        $userId = 1;
+        
+        $task = Task::find($id);
+        $task->name = $request->input('taskName');
+        $task->description = htmlentities($request->input('taskDescription'), ENT_QUOTES) ?? '';
+        if ($task->save()) {
+            SubTask::where('task_id', $id)->delete();
+            if ($request->has('subTasks') && !empty($request->input('subTasks'))) {
+                $subTasks = $request->input('subTasks');
+                $subTasksArr = [];
+                foreach ($subTasks as $v) {
+                    if ($v['name'] != '') {
+                        $arr = [];
+                        $arr['task_id'] = $task->id;
+                        $arr['name'] = $v['name'];
+                        $arr['description'] = $v['description'] ?? '';
+                        array_push($subTasksArr, $arr);
+                    }
+                }
+                if (!empty($subTasksArr)) {
+                    SubTask::insert($subTasksArr);
+                }
+            }
+        }
+
+        $responseArr['status'] = 200;
+        $responseArr['type'] = 'success';
+        $responseArr['msg'] = 'Task has been updated successfully';
         $responseArr['content'] = [];
         return response()->json($responseArr, 200);
     }

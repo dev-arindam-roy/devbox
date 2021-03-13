@@ -259,7 +259,9 @@ export default {
                     let index = _this.postBoxList.data.indexOf(postbox);
                     _this.postBoxList.data.splice(index, 1);
                     _this.postBoxList.total--;
-                    _this.$root.sidebarCount.postBoxCount--;
+                    _this.ckbIds = [];
+                    _this.isCheckAll = false;
+                    _this.$root.getCounts();
                 }
             })
             .catch(function (error) {
@@ -324,12 +326,12 @@ export default {
                         var indexOf = jsonObj.data.findIndex(data=> data.id === element);
                         jsonObj.data.splice(indexOf, 1);
                         jsonObj.total--;
-                        _this.$root.sidebarCount.postBoxCount--;
                     }); 
                     _this.postBoxList = jsonObj;
                     _this.ckbIds = [];
                     _this.isCheckAll = false;
                     _this.$swal.close();
+                    _this.$root.getCounts();
                 }
             })
             .catch(function (error) {

@@ -125,6 +125,8 @@ export default {
             }).then(response => {
                 _this.taskList = response.data.content.myTaskList;
                 _this.subTaskCount = response.data.content.subTaskCount;
+                _this.ckbIds = [];
+                _this.selectAllCkb = false;
                 _this.$root.isPageLoadingActive = false; 
             }).catch(function (error) {
                 _this.$toast.error({
@@ -157,6 +159,9 @@ export default {
 
                     let index = _this.taskList.data.indexOf(task);
                     _this.taskList.data[index].status = _status;
+                    if (_status == 1) {
+                        _this.taskList.total--;
+                    }
                     _this.$root.getCounts();
                 }
             })
@@ -213,6 +218,8 @@ export default {
                     let index = _this.taskList.data.indexOf(task);
                     _this.taskList.data.splice(index, 1);
                     _this.taskList.total--;
+                    _this.ckbIds = [];
+                    _this.selectAllCkb = false;
                     _this.$root.getCounts();
                 }
             })
@@ -281,7 +288,7 @@ export default {
                     }); 
                     _this.taskList = jsonObj;
                     _this.ckbIds = [];
-                    _this.isCheckAll = false;
+                    _this.selectAllCkb = false;
                     _this.$swal.close();
                     _this.$root.getCounts();
                 }

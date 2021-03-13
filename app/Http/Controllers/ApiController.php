@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use App\Traits\ApiHelperTrait as ApiHelper;
 use App\Models\Categories;
 use App\Models\PostBoxes;
 use App\Models\SubTask;
 use App\Models\Task;
+use App\Models\Note;
 use Carbon\Carbon;
 
 class ApiController extends Controller
@@ -400,10 +402,11 @@ class ApiController extends Controller
 
     public function getAllCounts()
     {
+        $userId = 1;
         $responseArr = [];
-        $categoryCount = Categories::count();
-        $postBoxCount = PostBoxes::count();
-        $postBox = PostBoxes::all();
+        $categoryCount = Categories::where('user_id', $userId)->count();
+        $postBoxCount = PostBoxes::where('user_id', $userId)->count();
+        $postBox = PostBoxes::where('user_id', $userId)->get();
         $keywordsArr = [];
         if (count($postBox)) {
             foreach ($postBox as $v) {
@@ -419,7 +422,8 @@ class ApiController extends Controller
         }
         $uniqueKeywords = array_unique($keywordsArr);
 
-        $tasksCount = Task::where('status', '!=', 1)->count();
+        $tasksCount = Task::where('user_id', $userId)->where('status', '!=', 1)->count();
+        $notesCount = Note::where('user_id', $userId)->count();
         $responseArr['status'] = 200;
         $responseArr['type'] = 'success';
         $responseArr['msg'] = '';
@@ -427,18 +431,20 @@ class ApiController extends Controller
             'categoryCount' => $categoryCount,
             'postBoxCount' => $postBoxCount,
             'keywordCount' => count($uniqueKeywords),
-            'tasksCount' => $tasksCount
+            'tasksCount' => $tasksCount,
+            'notesCount' => $notesCount
         ];
         return response()->json($responseArr, 200);
     }
 
     public function allKeywords(Request $request)
     {
+        $userId = 1;
         $responseArr = [];
         if ($request->has('searchKeyword') && $request->get('searchKeyword') != '') {
-            $postBox = PostBoxes::where('keywords', 'LIKE', '%' . $request->get('searchKeyword') . '%')->get();
+            $postBox = PostBoxes::where('user_id', $userId)->where('keywords', 'LIKE', '%' . $request->get('searchKeyword') . '%')->get();
         } else {
-            $postBox = PostBoxes::all();
+            $postBox = PostBoxes::where('user_id', $userId)->get();
         }
     
         $keywordsArr = [];
@@ -674,6 +680,215 @@ class ApiController extends Controller
         $responseArr['msg'] = 'Task has been updated successfully';
         $responseArr['content'] = [];
         return response()->json($responseArr, 200);
+    }
+
+    /** Notes */
+
+    public function getNotes(Request $request)
+    {
+        $responseArr = [];
+        $userId = 1;
+        $allNotes = Note::where('user_id', $userId)->orderBy('id', 'desc');
+        if ($request->has('noteTitle') && $request->get('noteTitle') != '') {
+            $allNotes = $allNotes->where('title', 'LIKE', '%' . $request->get('noteTitle') . '%');
+        }
+        if ($request->has('status') && is_array($request->get('status')) && !empty($request->get('status'))) {
+            $allNotes = $allNotes->whereIn('status', $request->get('status'));
+        } else if ($request->has('status') && !is_array($request->get('status')) && $request->get('status') != '') {
+            $allNotes = $allNotes->where('status', $request->get('status'));
+        } else {
+            $allNotes = $allNotes->whereNotNull('status');
+        }
+        if ($request->has('pagination') && $request->get('pagination') != '' && $request->get('pagination') != 0) {
+            $allNotes = $allNotes->paginate($request->get('pagination'));
+        } else {
+            $allNotes = $allNotes->get();
+        }
+        
+        $responseArr['status'] = 200;
+        $responseArr['type'] = 'success';
+        $responseArr['msg'] = 'My Notes';
+        $responseArr['content'] = [
+            'myNoteList' => $allNotes
+        ];
+        return response()->json($responseArr, 200);
+    }
+
+    public function createNote(Request $request)
+    {
+        $rules = [
+            'title' => ['required']
+        ];
+        $messages = [
+            'title.required' => 'Note title is required'
+        ];
+        $validation = $this->checkInputValidation($request->all(), $rules, $messages);
+        if (!empty($validation)) {
+            return response()->json($validation, $validation['status']);
+        }
+
+        $responseArr = [];
+        $userId = 1;
+
+        $noteTitle = $request->input('title');
+        $isExist = Note::where('user_id', $userId)->where('title', $noteTitle)->exists();
+        if ($isExist) {
+            $responseArr['status'] = 200;
+            $responseArr['type'] = 'error';
+            $responseArr['msg'] = 'Note title already exist';
+            $responseArr['content'] = ['noteName' => $noteTitle];
+            return response()->json($responseArr, 200);
+        }
+
+        $note = new Note;
+        $note->user_id = $userId;
+        $note->title = $request->input('title');
+        $note->slug = Str::slug($request->input('title'));
+        $note->note_content = trim(html_entity_decode(trim($request->input('note_content')), ENT_QUOTES));
+        $note->save();
+        $responseArr['status'] = 200;
+        $responseArr['type'] = 'success';
+        $responseArr['msg'] = 'Note has been created successfully';
+        $responseArr['content'] = [
+            'note' => $note
+        ];
+        return response()->json($responseArr, 200);
+    }
+
+    public function getNoteInfoBySlug(Request $request, $slug)
+    {
+        $responseArr = [];
+        $responseArr['status'] = 404;
+        $userId = 1;
+        $note = Note::where('slug', $slug)->where('user_id', $userId)->first();
+        if (!empty($note)) {
+            $note->note_content = trim(html_entity_decode(trim($note->note_content), ENT_QUOTES));
+            $responseArr['status'] = 200;
+            $responseArr['type'] = 'success';
+            $responseArr['msg'] = 'Note info';
+            $responseArr['content'] = [
+                'noteInfo' => $note,
+            ];
+        }
+        return response()->json($responseArr, $responseArr['status']);
+    }
+
+    public function getNoteInfoById(Request $request, $id)
+    {
+        $responseArr = [];
+        $responseArr['status'] = 404;
+        $userId = 1;
+        $note = Note::where('id', $id)->where('user_id', $userId)->first();
+        if (!empty($note)) {
+            $note->note_content = trim(html_entity_decode(trim($note->note_content), ENT_QUOTES));
+            $responseArr['status'] = 200;
+            $responseArr['type'] = 'success';
+            $responseArr['msg'] = 'Note info';
+            $responseArr['content'] = [
+                'noteInfo' => $note,
+            ];
+        }
+        return response()->json($responseArr, $responseArr['status']);
+    }
+
+    public function updateNote(Request $request, $id)
+    {
+        $rules = [
+            'title' => ['required']
+        ];
+        $messages = [
+            'title.required' => 'Note title is required'
+        ];
+        $validation = $this->checkInputValidation($request->all(), $rules, $messages);
+        if (!empty($validation)) {
+            return response()->json($validation, $validation['status']);
+        }
+
+        $responseArr = [];
+        $userId = 1;
+
+        // Check note title exists or not
+        $noteTitle = $request->input('title');
+        $isExist = Note::where('user_id', $userId)
+            ->where('id', '!=', $id)
+            ->where('title', $noteTitle)
+            ->exists();
+        if ($isExist) {
+            $responseArr['status'] = 200;
+            $responseArr['type'] = 'error';
+            $responseArr['msg'] = 'Note title already exist';
+            $responseArr['content'] = ['noteTitle' => $noteTitle];
+            return response()->json($responseArr, 200);
+        }
+
+        $note = Note::where('id', $id)->where('user_id', $userId)->first();
+        $note->title = $request->input('title');
+
+        // Check slug editable manually and exists or not
+        if ($request->input('isSlugEditable')) {
+            $slug = Str::slug($request->input('slugPart'));
+            if ($this->isSlugExist('notes', $slug, $id)) {
+                $responseArr['status'] = 200;
+                $responseArr['type'] = 'error';
+                $responseArr['msg'] = 'Note not saved! Slug already exist in system, Please try another.';
+                return response()->json($responseArr, 200);
+            }
+            $note->slug = $slug;
+        }
+
+        $note->note_content = trim(html_entity_decode(trim($request->input('note_content')), ENT_QUOTES));
+        $note->status = $request->input('status');
+        $note->completed_percentage = $request->input('completed_percentage');
+        $note->save();
+        $responseArr['status'] = 200;
+        $responseArr['type'] = 'success';
+        $responseArr['msg'] = 'Note has been updated successfully';
+        $responseArr['content'] = [
+            'note' => $note
+        ];
+        return response()->json($responseArr, 200);
+    }
+
+    public function deleteNote(Request $request)
+    {
+        $responseArr = [];
+        $note = Note::find($request->input('noteId'));
+        $note->delete();
+        $responseArr['status'] = 200;
+        $responseArr['type'] = 'success';
+        $responseArr['msg'] = "Note has been deleted successfully";
+        $responseArr['content'] = [];
+        return response()->json($responseArr, 200);
+    }
+
+    public function bulkDeleteNote(Request $request)
+    {
+        $responseArr = [];
+        if ($this->bulkDelete('notes', $request->input('ids'))) {
+            $responseArr['status'] = 200;
+            $responseArr['type'] = 'success';
+            $responseArr['msg'] = "Notes has been deleted successfully";
+            $responseArr['content'] = [];
+        }
+        return response()->json($responseArr, 200);
+    }
+
+    // Check Slug
+    public function checkSlug(Request $request)
+    {
+        $responseArr = [];
+        $responseArr['status'] = 200;
+        $responseArr['type'] = 'success';
+
+        $slug = $request->input('slug');
+        $id = $request->input('id');
+        
+        if ($this->isSlugExist('notes', $slug, $id)) {
+            $responseArr['type'] = 'error';
+            $responseArr['msg'] = 'Slug already exist in system, Please try another.';
+        }
+        $responseArr['content'] = [];
+        return response()->json($responseArr, $responseArr['status']);
     }
 
 }

@@ -175,7 +175,9 @@ export default {
                     let index = _this.boxCategories.data.indexOf(category);
                     _this.boxCategories.data.splice(index, 1);
                     _this.boxCategories.total--;
-                    _this.$root.sidebarCount.categoryCount--;
+                    _this.ckbIds = [];
+                    _this.isCheckAll = false;
+                    _this.$root.getCounts();
                     //console.log(_this.boxCategories.data.length);
                 }
             })
@@ -359,12 +361,12 @@ export default {
                         var indexOf = jsonObj.data.findIndex(data=> data.id === element);
                         jsonObj.data.splice(indexOf, 1);
                         jsonObj.total--;
-                        _this.$root.sidebarCount.categoryCount--;
                     }); 
                     _this.boxCategories = jsonObj;
                     _this.ckbIds = [];
                     _this.isCheckAll = false;
                     _this.$swal.close();
+                    _this.$root.getCounts();
                 }
             })
             .catch(function (error) {

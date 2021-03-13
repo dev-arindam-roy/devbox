@@ -27,7 +27,8 @@
                             :category-count="sidebarCount.categoryCount"
                             :keyword-count="sidebarCount.keywordCount"
                             :task-count="sidebarCount.taskCount"
-                            :note-count="sidebarCount.noteCount"></myoption-navmenu>
+                            :note-count="sidebarCount.noteCount" 
+                            :blog-count="sidebarCount.blogCount"></myoption-navmenu>
                         <!-- <sidebar-menu></sidebar-menu> -->
                     </div>
                     <div class="col-md-9">

@@ -2,6 +2,7 @@
     <div id="MyOption">
         <div class="list-group mb-3">
             <router-link :to="{name: 'homeRoute'}" class="list-group-item list-group-item-action text-option-bold">Home</router-link>
+            <router-link :to="{name : 'addBlogRoute'}" class="list-group-item list-group-item-action text-option-bold">Add Blog</router-link>
             <router-link :to="{name : 'addBoxRoute'}" class="list-group-item list-group-item-action text-option-bold">Add PostBox</router-link>
             <router-link :to="{name : 'addCategoryRoute'}" class="list-group-item list-group-item-action text-option-bold">Add Category</router-link>
         </div>
@@ -11,6 +12,7 @@
             <router-link :to="{name : 'myKeywordListRoute'}" class="list-group-item list-group-item-action text-option-bold">Keywords <span class="badge badge-primary navbg badge-pill float-right" v-text="$props.keywordCount"></span></router-link>
             <router-link :to="{name : 'myTaskListRoute'}" class="list-group-item list-group-item-action text-option-bold">Tasks <span class="badge badge-primary navbg badge-pill float-right" v-text="$props.taskCount"></span></router-link>
             <router-link :to="{name : 'myNoteListRoute'}" class="list-group-item list-group-item-action text-option-bold">Notes <span class="badge badge-primary navbg badge-pill float-right" v-text="$props.noteCount"></span></router-link>
+            <router-link :to="{name : 'blogListRoute'}" class="list-group-item list-group-item-action text-option-bold">Blogs <span class="badge badge-primary navbg badge-pill float-right" v-text="$props.blogCount"></span></router-link>
         </div>
     </div>
 </template>
@@ -35,6 +37,10 @@ export default {
             default: 0
         },
         noteCount: {
+            type: Number,
+            default: 0
+        },
+        blogCount: {
             type: Number,
             default: 0
         }

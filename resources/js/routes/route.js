@@ -17,6 +17,11 @@ import _addEditTaskComponent from '../components/pages/addEditTaskComponent.vue'
 import _myTaskViewComponent from '../components/pages/myTaskViewComponent.vue'
 
 import _myNoteListComponent from '../components/pages/myNoteListComponent.vue'
+import _addEditNoteComponent from '../components/pages/addEditNoteComponent.vue'
+import _myNoteViewComponent from '../components/pages/myNoteViewComponent.vue'
+
+import _myBlogListComponent from '../components/pages/myBlogListComponent.vue'
+import _addEditBlogComponent from '../components/pages/addEditBlogComponent.vue'
 
 import _404Component from '../components/pages/404Component.vue'
 
@@ -109,7 +114,39 @@ const webRoutes = new VueRouter({
             component: _myNoteListComponent,
             name: 'myNoteListRoute',
         },
+        {
+            path: '/my-notes/add',
+            component: _addEditNoteComponent,
+            name: 'addNoteRoute'
+        },
+        {
+            path: '/my-notes/view/:slug',
+            component: _myNoteViewComponent,
+            name: 'viewNoteRoute'
+        },
+        {
+            path: '/my-notes/edit/:id',
+            component: _addEditNoteComponent,
+            name: 'editNoteRoute',
+        },
 
+        {
+            path: '/blogs',
+            component: _myBlogListComponent,
+            name: 'blogListRoute'
+        },
+        {
+            path: '/blogs/add',
+            component: _addEditBlogComponent,
+            name: 'addBlogRoute'
+        },
+
+
+        {
+            path: '/notes/:slug',
+            component: _myNoteViewComponent,
+            name: 'publicViewNoteRoute'
+        },
 
         {
             path: '*',

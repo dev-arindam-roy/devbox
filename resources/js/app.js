@@ -87,6 +87,17 @@ Vue.prototype.$taskStatusList = [
         'name' : 'Stoped'
     }
 ];
+
+Vue.prototype.$noteStatusList = [
+    {
+        'id' : 0,
+        'name' : 'In-Progress'
+    },
+    {
+        'id' : 1,
+        'name' : 'Published'
+    }
+];
 // end global constant define
 
 /* ============================================================================ */
@@ -128,7 +139,8 @@ const app = new Vue({
                 categoryCount: 0,
                 keywordCount: 0,
                 taskCount: 0,
-                noteCount: 0
+                noteCount: 0,
+                blogCount: 0
             }
         }
     },
@@ -142,6 +154,7 @@ const app = new Vue({
                 _this.sidebarCount.postBoxCount = response.data.content.postBoxCount;
                 _this.sidebarCount.keywordCount = response.data.content.keywordCount;
                 _this.sidebarCount.taskCount = response.data.content.tasksCount;
+                _this.sidebarCount.noteCount = response.data.content.notesCount;
             }).catch(function (error) {
                 _this.$toast.error({
                     title:'System Error',

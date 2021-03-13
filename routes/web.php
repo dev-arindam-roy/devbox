@@ -64,6 +64,20 @@ Route::name('task.')->group(function () {
     });
 });
 
+
+// NOTES
+Route::name('note.')->group(function () {
+    Route::group(['prefix' => 'notes'], function() {
+        Route::get('/', [ApiController::class, 'getNotes'])->name('all');
+        Route::get('/view/{slug}', [ApiController::class, 'getNoteInfoBySlug'])->name('view');
+        Route::post('/add', [ApiController::class, 'createNote'])->name('add');
+        Route::get('/edit/{id}', [ApiController::class, 'getNoteInfoById'])->name('edit');
+        Route::post('/update/{id}', [ApiController::class, 'updateNote'])->name('update');
+        Route::post('/delete', [ApiController::class, 'deleteNote'])->name('delete');
+        Route::post('/bulkDelete', [ApiController::class, 'bulkDeleteNote'])->name('bulkDelete');
+    });
+});
+
 // DASHBOARD
 Route::name('dash.')->group(function () {
     Route::group(['prefix' => 'dashboard'], function() {
@@ -71,6 +85,8 @@ Route::name('dash.')->group(function () {
     });
 });
 
+
+Route::post('/check-slug/existOrNot', [ApiController::class, 'checkSlug'])->name('checkSlug');
 
 // ROOT
 Route::get('/{any?}', function () {

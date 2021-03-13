@@ -47,4 +47,13 @@ trait ApiHelperTrait {
         DB::table($tabName)->whereIn('id', $rowIds)->delete();
         return true;
     }
+
+    public function isSlugExist($tabName, $slug, $id)
+    {
+        $isExist = DB::table($tabName)->where('slug', trim($slug))->where('id', '!=', $id)->exists();
+        if ($isExist) {
+            return true;
+        }
+        return false;
+    }
 }

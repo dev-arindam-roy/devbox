@@ -215,7 +215,7 @@ export default {
         searchByCategory(catId) {
             var _this = this;
             _this.postCategory = catId;
-             _this.searchDevPost();
+            _this.searchDevPost();
         }
     }
 }

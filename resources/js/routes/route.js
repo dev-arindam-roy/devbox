@@ -25,6 +25,9 @@ import _addEditBlogComponent from '../components/pages/addEditBlogComponent.vue'
 
 import _404Component from '../components/pages/404Component.vue'
 
+const _numericRegx = /^\d+$/
+const _alphNumericRegx = /^[A-Za-z0-9-_]+$/
+
 const webRoutes = new VueRouter({
     mode: 'history',
     linkExactActiveClass: 'active',
@@ -57,6 +60,13 @@ const webRoutes = new VueRouter({
             path: '/my-post-boxes/edit/:id',
             component: _addEditBoxComponent,
             name: 'editPostBoxRoute',
+            props: true,
+            beforeEnter: (to, from, next) => {
+                if (!_numericRegx.test(to.params.id)) {
+                    next({name: 'notfound'})
+                }
+                next()
+            }
         },
 
 
@@ -75,6 +85,13 @@ const webRoutes = new VueRouter({
             path: '/my-categories/edit/:id',
             component: _addEditCategoryComponent,
             name: 'editCategoryRoute',
+            props: true,
+            beforeEnter: (to, from, next) => {
+                if (!_numericRegx.test(to.params.id)) {
+                    next({name: 'notfound'})
+                }
+                next()
+            }
         },
 
 
@@ -101,11 +118,25 @@ const webRoutes = new VueRouter({
             path: '/my-tasks/edit/:id',
             component: _addEditTaskComponent,
             name: 'editTaskRoute',
+            props: true,
+            beforeEnter: (to, from, next) => {
+                if (!_numericRegx.test(to.params.id)) {
+                    next({name: 'notfound'})
+                }
+                next()
+            }
         },
         {
             path: '/my-task/view/:id',
             component: _myTaskViewComponent,
-            name: 'viewTaskRoute'
+            name: 'viewTaskRoute',
+            props: true,
+            beforeEnter: (to, from, next) => {
+                if (!_numericRegx.test(to.params.id)) {
+                    next({name: 'notfound'})
+                }
+                next()
+            }
         },
 
 
@@ -122,12 +153,26 @@ const webRoutes = new VueRouter({
         {
             path: '/my-notes/view/:slug',
             component: _myNoteViewComponent,
-            name: 'viewNoteRoute'
+            name: 'viewNoteRoute',
+            props: true,
+            beforeEnter: (to, from, next) => {
+                if (!_alphNumericRegx.test(to.params.slug)) {
+                    next({name: 'notfound'})
+                }
+                next()
+            }
         },
         {
             path: '/my-notes/edit/:id',
             component: _addEditNoteComponent,
             name: 'editNoteRoute',
+            props: true,
+            beforeEnter: (to, from, next) => {
+                if (!_numericRegx.test(to.params.id)) {
+                    next({name: 'notfound'})
+                }
+                next()
+            }
         },
 
         {
@@ -145,7 +190,14 @@ const webRoutes = new VueRouter({
         {
             path: '/notes/:slug',
             component: _myNoteViewComponent,
-            name: 'publicViewNoteRoute'
+            name: 'publicViewNoteRoute',
+            props: true,
+            beforeEnter: (to, from, next) => {
+                if (!_alphNumericRegx.test(to.params.slug)) {
+                    next({name: 'notfound'})
+                }
+                next()
+            }
         },
 
         {

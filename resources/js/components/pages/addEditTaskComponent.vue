@@ -10,7 +10,7 @@
                                 <span class="box-title" v-else>Create Task</span>
                             </div>
                             <div class="col-md-6 text-right">
-                                <router-link class="btn btn-sm btn-success" :to="{name: 'viewTaskRoute', params: {id: $route.params.id}}" v-show="$route.params.id != undefined"><i class="far fa-eye"></i></router-link>
+                                <a href="javascript:void(0);" class="btn btn-sm btn-success" @click="viewTask" v-show="$route.params.id != undefined"><i class="far fa-eye"></i></a>
                                 <router-link class="btn btn-sm btn-primary navbg" :to="{name: 'addTaskRoute'}" v-show="$route.params.id != undefined">Add Task</router-link>
                                 <router-link class="btn btn-sm btn-primary navbg" :to="{name: 'myTaskListRoute'}">All Tasks</router-link>
                             </div>
@@ -20,11 +20,25 @@
                         <validationErrorComponent :validationErrorListArr="validationErrors"></validationErrorComponent>
                         <div class="row">
                             <!-- edit time add task status -->
-                            <div class="col-md-12" style="border-radius: 5px;" v-if="$route.params.id != undefined" v-bind:class="{'bg-primary' : taskStatus == 2, 'bg-success' : taskStatus == 1, 'bg-warning' : taskStatus == 3, 'bg-danger' : taskStatus == 4}">
-                                <div class="form-group mt-3">
-                                    <select :value="taskStatus" class="sele-dropdown" v-on:change="changeTaskStatus($event)">
-                                        <option v-for="sts in taskStatusList" :key="sts.id" :value="sts.id">{{sts.name}}</option>
-                                    </select>
+                            <div class="col-md-12" v-show="$route.params.id != undefined">
+                                <div class="row">
+                                    <div class="col-md-12" style="border-radius: 5px;" v-bind:class="{'bg-primary' : taskStatus == 2, 'bg-success' : taskStatus == 1, 'bg-warning' : taskStatus == 3, 'bg-danger' : taskStatus == 4}">
+                                        <div class="form-group mt-3">
+                                            <select :value="taskStatus" class="sele-dropdown" v-on:change="changeTaskStatus($event)">
+                                                <option v-for="sts in taskStatusList" :key="sts.id" :value="sts.id" :disabled="sts.id == 0">{{sts.name}}</option>
+                                            </select>
+                                            <select v-show="!isHaveAnySubTask" v-model.trim="paraentTaskPercentage" class="sele-dropdown" @change="updateProgressPercentage($event)">
+                                                <option v-for="percentageItem in percentageList" :key="percentageItem" :value="percentageItem">{{percentageItem}}%</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 mt-3">
+                                        <div class="form-group">
+                                            <div class="progress">
+                                                <div class="progress-bar progress-bar-striped progress-bar-animated" v-bind:class="progressBar.bgClass" role="progressbar" v-bind:style="[progressBar.style]" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">{{progressBar.value}}</div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <!-- end -->
@@ -55,9 +69,12 @@
                                         <textarea v-model.trim="subTask.description" class="form-control" placeholder="SubTask Description"></textarea>
                                     </div>
                                      <!-- edit time add subtask status -->
-                                    <div class="form-group" v-if="$route.params.id != undefined && subTask.status != undefined">
-                                        <select :value="subTask.status" class="sele-dropdown" v-on:change="changeSubTaskStatus(subTask, $event)" v-bind:class="{'bg-primary' : subTask.status == 2, 'bg-success' : subTask.status == 1, 'bg-warning' : subTask.status == 3, 'bg-danger' : subTask.status == 4}">
-                                            <option v-for="sts in taskStatusList" :key="sts.id" :value="sts.id">{{sts.name}}</option>
+                                    <div class="form-group" v-if="$route.params.id != undefined && subTask.id != undefined">
+                                        <select v-model.trim="subTask.status" class="sele-dropdown" v-on:change="changeSubTaskStatus(subTask, $event)" v-bind:class="{'bg-primary' : subTask.status == 2, 'bg-success' : subTask.status == 1, 'bg-warning' : subTask.status == 3, 'bg-danger' : subTask.status == 4}">
+                                            <option v-for="sts in taskStatusList" :key="sts.id" :value="sts.id" :disabled="sts.id == 0">{{sts.name}}</option>
+                                        </select>
+                                        <select v-model.trim="subTask.subtask_percentage" class="sele-dropdown" v-on:change="overallPercentage()">
+                                            <option v-for="percentageItem in percentageList" :key="percentageItem" :value="percentageItem">{{percentageItem}}%</option>
                                         </select>
                                     </div>
                                     <!-- end -->
@@ -115,13 +132,28 @@ export default {
             subTaskList: [
                 {
                     name: '',
-                    description: ''
+                    description: '',
+                    status: 0,
+                    subtask_percentage: 0
                 }
             ],
             validationErrors: [],
 
             editTaskID: 0,
             submitButtonText: 'Add Task',
+
+            percentageList: [0, 10, 25, 35, 50, 75, 95, 100],
+            paraentTaskPercentage: 0,
+            progressBar: {
+                style: {
+                    width: '0%',
+                    color: '#fff',
+                },
+                value: '0%',
+                bgClass: '',
+            },
+
+            isHaveAnySubTask: false,
         }
     },
     validations: {
@@ -134,7 +166,7 @@ export default {
         resetAll() {
             var _this = this;
             _this.taskName = '';
-            _this.subTaskList = [{name: '', description: ''}];
+            _this.subTaskList = [{name: '', description: '', status: 0, subtask_percentage: 0}];
             _this.validationErrors = [],
             _this.$v.$reset();
         },
@@ -216,6 +248,8 @@ export default {
                 data: {
                     taskName: _this.taskName,
                     taskDescription: _this.taskDescription,
+                    status: _this.taskStatus,
+                    paraentTaskPercentage: _this.paraentTaskPercentage,
                     subTasks: _this.subTaskList
                 },
                 headers: {'Content-Type': 'application/json'}
@@ -263,15 +297,18 @@ export default {
                 _this.taskName = response.data.content.taskInfo.name;
                 _this.taskDescription = response.data.content.taskInfo.description;
                 _this.taskStatus = response.data.content.taskInfo.status;
+                _this.paraentTaskPercentage = response.data.content.taskInfo.task_percentage;
 
                 if (response.data.content.subTasksInfo.length > 0) {
                     _this.subTaskList = response.data.content.subTasksInfo;
+                    _this.isHaveAnySubTask = true;
                 } else {
-                    _this.subTaskList = [{name: '', description: ''}];
+                    _this.subTaskList = [{name: '', description: '', status: 0, subtask_percentage: 0}];
                 }
                 
                 _this.$root.isPageLoadingActive = false; 
                 _this.submitButtonText = 'Save Changes';
+                _this.progressPercentageProcess();
             }).catch(function (error) {
                 _this.$toast.error({
                     title:'System Error',
@@ -308,6 +345,18 @@ export default {
 
                     let index = _this.subTaskList.indexOf(subtask);
                     _this.subTaskList[index].status = _status;
+
+                    if (_status == 0) {
+                        _this.subTaskList[index].subtask_percentage = 0;
+                    }
+                    if (_status == 1) {
+                        _this.subTaskList[index].subtask_percentage = 100;
+                    }
+                    if (_status == 2) {
+                        _this.subTaskList[index].subtask_percentage = 10;
+                    }
+                    _this.addRemoveToast();
+                    _this.overallPercentage();
                 }
             })
             .catch(function (error) {
@@ -339,6 +388,20 @@ export default {
                         message:response.data.msg
                     });
                     _this.taskStatus = _status;
+
+                    if (_status == 0) {
+                        _this.paraentTaskPercentage = 0;
+                        _this.progressPercentageProcess();
+                    }
+                    if (_status == 1) {
+                        _this.paraentTaskPercentage = 100;
+                        _this.progressPercentageProcess();
+                    }
+                    if (_status == 2) {
+                        _this.paraentTaskPercentage = 10;
+                        _this.progressPercentageProcess();
+                    }
+                    _this.addRemoveToast();
                     _this.$root.getCounts();
                 }
             })
@@ -357,6 +420,64 @@ export default {
                     message:'Please click on Save Changes button to save the edit'
                 });
             }
+        },
+        updateProgressPercentage(event) {
+            var _this = this;
+            if (event.target.value == 100) {
+                _this.taskStatus = 1;
+            }
+            _this.progressPercentageProcess();
+            _this.addRemoveToast();
+        },
+        progressPercentageProcess() {
+            var _this = this;
+            var bg = '';
+            var clr = '#fff';
+            if (_this.paraentTaskPercentage > 0 && _this.paraentTaskPercentage <= 10) {
+                bg = 'bg-danger';
+            } else if (_this.paraentTaskPercentage > 10 && _this.paraentTaskPercentage <= 25) {
+                bg = 'bg-secondary';
+            } else if (_this.paraentTaskPercentage > 25 && _this.paraentTaskPercentage <= 50) {
+                bg = 'bg-primary';
+            } else if (_this.paraentTaskPercentage > 50 && _this.paraentTaskPercentage <= 75) {
+                bg = 'bg-warning';
+                clr = '#000';
+            } else if (_this.paraentTaskPercentage > 75) {
+                bg = 'bg-success';
+            }
+
+            if (_this.paraentTaskPercentage >= 100) {
+                _this.taskStatus = 1;
+            }
+
+            _this.progressBar.style.width = _this.paraentTaskPercentage + '%';
+            _this.progressBar.style.color = clr;
+            _this.progressBar.value = _this.paraentTaskPercentage + '%';
+            _this.progressBar.bgClass = bg;
+        },
+        overallPercentage() {
+            var s = 0;
+            var _this = this;
+            if (_this.isHaveAnySubTask) {
+                _this.paraentTaskPercentage = 0;
+                _this.subTaskList.map(function(subTask){
+                    if (subTask.subtask_percentage != undefined) {
+                        _this.paraentTaskPercentage = _this.paraentTaskPercentage + subTask.subtask_percentage;
+                        s++;
+                    }        
+                })
+                _this.paraentTaskPercentage = Math.round(_this.paraentTaskPercentage / s);
+                _this.progressPercentageProcess();
+            }
+        },
+        viewTask() {
+            var _this = this;
+            _this.$router.push({
+                name: 'viewTaskRoute',
+                params: {
+                    slug: _this.$route.params.id
+                }
+            })
         }
     },
     mounted() {

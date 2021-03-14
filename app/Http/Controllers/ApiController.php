@@ -592,6 +592,15 @@ class ApiController extends Controller
         $task = Task::find($request->input('id'));
         if (!empty($task)) {
             $task->status = $request->input('status');
+            if ($request->input('status') == 0) {
+                $task->task_percentage = 0;
+            }
+            if ($request->input('status') == 1) {
+                $task->task_percentage = 100;
+            }
+            if ($request->input('status') == 2) {
+                $task->task_percentage = 10;
+            }
             $task->save();
         }
         $responseArr['status'] = 200;
@@ -627,6 +636,15 @@ class ApiController extends Controller
         $subtask = SubTask::find($request->input('id'));
         if (!empty($subtask)) {
             $subtask->status = $request->input('status');
+            if ($request->input('status') == 0) {
+                $subtask->subtask_percentage = 0;
+            }
+            if ($request->input('status') == 1) {
+                $subtask->subtask_percentage = 100;
+            }
+            if ($request->input('status') == 2) {
+                $subtask->subtask_percentage = 10;
+            }
             $subtask->save();
         }
         $responseArr['status'] = 200;
@@ -655,6 +673,8 @@ class ApiController extends Controller
         $task = Task::find($id);
         $task->name = $request->input('taskName');
         $task->description = htmlentities($request->input('taskDescription'), ENT_QUOTES) ?? '';
+        $task->status = $request->input('status');
+        $task->task_percentage = $request->input('paraentTaskPercentage');
         if ($task->save()) {
             SubTask::where('task_id', $id)->delete();
             if ($request->has('subTasks') && !empty($request->input('subTasks'))) {
@@ -666,6 +686,8 @@ class ApiController extends Controller
                         $arr['task_id'] = $task->id;
                         $arr['name'] = $v['name'];
                         $arr['description'] = $v['description'] ?? '';
+                        $arr['status'] = $v['status'] ?? 0;
+                        $arr['subtask_percentage'] = $v['subtask_percentage'] ?? 0;
                         array_push($subTasksArr, $arr);
                     }
                 }

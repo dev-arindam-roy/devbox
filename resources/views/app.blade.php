@@ -29,7 +29,6 @@
                             :task-count="sidebarCount.taskCount"
                             :note-count="sidebarCount.noteCount" 
                             :blog-count="sidebarCount.blogCount"></myoption-navmenu>
-                        <!-- <sidebar-menu></sidebar-menu> -->
                     </div>
                     <div class="col-md-9">
                         <router-view :key="$route.path"></router-view>

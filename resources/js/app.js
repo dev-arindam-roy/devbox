@@ -121,7 +121,6 @@ Vue.component('pagination', require('laravel-vue-pagination'));
 // components
 Vue.component('header-navmenu', require('./components/headerNavMenuComponent.vue').default);
 Vue.component('myoption-navmenu', require('./components/sidebarMyOptionComponent.vue').default);
-Vue.component('sidebar-menu', require('./components/sidebarMenuComponent.vue').default);
 Vue.component('page-loader', require('./components/pageLoadingComponent.vue').default);
 
 /**

@@ -14,7 +14,7 @@
                         </div>
                         <div class="row mt-3" v-if="keywordsList.length > 0">
                             <div class="col-md-12">
-                                <span style="font-size: 16px !important;" class="keywords keyword-size badge badge-secondary mr-1" v-for="keyword in keywordsList" v-bind:key="keyword.keywordName" @click="searchByKeyword(keyword.keywordName)">{{keyword.keywordName}} ({{keyword.use}})</span>
+                                <span style="font-size: 16px !important;" class="keywords keyword-size badge badge-secondary mr-1 mt-2" v-for="keyword in keywordsList" v-bind:key="keyword.keywordName" @click="searchByKeyword(keyword.keywordName)">{{keyword.keywordName}} ({{keyword.use}})</span>
                             </div>
                         </div>
                     </div>

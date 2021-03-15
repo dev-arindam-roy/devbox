@@ -13,15 +13,6 @@
                 <li class="nav-item">
                     <router-link class="nav-link" :to="{name: 'homeRoute'}">Home <span class="sr-only">(current)</span></router-link>
                 </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Create
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <router-link class="dropdown-item" :to="{name: 'addBoxRoute'}">Add PostBox</router-link>
-                        <router-link class="dropdown-item" :to="{name: 'addCategoryRoute'}">Add Category</router-link>
-                    </div>
-                </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">My Profile</a>
                 </li>

@@ -3,6 +3,16 @@ import VueRouter from 'vue-router';
 
 Vue.use(VueRouter);
 
+import _loginComponent from '../components/pages/loginComponent.vue'
+import _registrationComponent from '../components/pages/registrationComponent.vue'
+
+import _authInProgressComponent from '../components/pages/authInProgressComponent.vue'
+
+import _dashboardComponent from '../components/pages/dashboardComponent.vue'
+import _homeComponent from '../components/pages/homeComponent.vue'
+
+import _myAccountComponent from '../components/pages/myAccountComponent.vue'
+
 import _addEditBoxComponent from '../components/pages/addEditBoxComponent.vue'
 import _postBoxComponent from '../components/pages/postBoxComponent.vue'
 import _myPostBoxListComponent from '../components/pages/myPostBoxListComponent.vue'
@@ -34,6 +44,41 @@ const webRoutes = new VueRouter({
     base: process.env.BASE_URL,
     routes: [
         {
+            path: '/',
+            component: _loginComponent,
+            name: 'loginRoute',
+        },
+        {
+            path: '/create-account',
+            component: _registrationComponent,
+            name: 'registrationRoute'
+        },
+        {
+            path: '/authentication-inprogress',
+            component: _authInProgressComponent,
+            name: 'authInprogressRoute'
+        },
+
+        {
+            path: '/dashboard',
+            component: _dashboardComponent,
+            name: 'dashboardRoute'
+        },
+        {
+            path: '/home',
+            component: _homeComponent,
+            name: 'homeRoute'
+        },
+
+
+        {
+            path: '/my-account',
+            component: _myAccountComponent,
+            name: 'myAccountRoute'
+        },
+
+
+        {
             // path: '/',
             // components: {
             //     default: _boxSearchComponent,
@@ -41,13 +86,16 @@ const webRoutes = new VueRouter({
             // },
             // name: 'homeRoute'
 
-            path: '/',
+            path: '/my-post-boxes',
             component: _postBoxComponent,
-            name: 'homeRoute'
+            name: 'snippetRoute',
+            // meta: {
+            //     requiredAuth: true
+            // }
         },
 
         {
-            path: '/my-post-boxes',
+            path: '/my-post-boxes/list',
             component: _myPostBoxListComponent,
             name: 'myPostBoxesRoute',
         },
@@ -211,6 +259,14 @@ const webRoutes = new VueRouter({
             component: _404Component
         }
     ]
+});
+
+webRoutes.beforeEach((to, from, next) => {
+    //console.log(to.name + '--' + from.name);
+    // if (to.matched.some(record => record.meta.requiredAuth)) {
+    //     console.log(Vue.prototype.$isLoggedInUser);
+    // }
+    next();
 });
 
 export default webRoutes;

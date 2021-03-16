@@ -14,6 +14,16 @@ use App\Http\Controllers\ApiController;
 |
 */
 
+// AUTH
+Route::name('appAuth.')->group(function () {
+    Route::group(['prefix' => 'auth'], function() {
+        Route::post('/signup', [ApiController::class, 'signUp'])->name('signUp');
+        Route::post('/signin', [ApiController::class, 'signIn'])->name('signIn');
+        Route::post('/signout', [ApiController::class, 'signOut'])->name('signOut');
+        Route::post('/checkAuth', [ApiController::class, 'checkAuth'])->name('checkAuth');
+    });
+});
+
 
 // CATEGORY
 Route::name('category.')->group(function () {

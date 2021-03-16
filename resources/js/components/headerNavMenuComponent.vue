@@ -9,15 +9,21 @@
         </button>
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav ml-auto">
+            <ul class="navbar-nav ml-auto" v-show="$root.isUserLoggedIn">
                 <li class="nav-item">
-                    <router-link class="nav-link" :to="{name: 'homeRoute'}">Home <span class="sr-only">(current)</span></router-link>
+                    <router-link class="nav-link" :to="{name: 'homeRoute'}">Home</router-link>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">My Profile</a>
+                    <router-link class="nav-link" :to="{name: 'myAccountRoute'}">My Account</router-link>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Logout</a>
+                    <a class="nav-link" href="javascript:void(0);" @click="logout">Logout</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav ml-auto" v-show="!$root.isUserLoggedIn">
+                <li class="nav-item">
+                    <router-link class="nav-link" :to="{name: 'loginRoute'}" v-show="$route.name == 'registrationRoute'">Login</router-link>
+                    <router-link class="nav-link" :to="{name: 'registrationRoute'}" v-show="$route.name == 'loginRoute'">Create Account</router-link>
                 </li>
             </ul>
         </div>
@@ -25,8 +31,34 @@
 </template>
 
 <script>
-    export default {
-        mounted() {
+export default {
+    props:{
+        
+    },
+    data() {
+        return {
+            
         }
+    },
+    methods: {
+        async logout() {
+            var _this = this;
+            _this.$root.isPageLoadingActive = true;
+            axios.post('/auth/signout').then(response => {
+                if (response.data.status == 200) {
+                    //_this.$root.isUserLoggedIn = false;
+                    //_this.$root.appUserInfo = [];
+                    window.location.href = "/";
+                }
+            }).catch(function (error) {
+                _this.$toast.error({
+                    title:'System Error',
+                    message:'Something went wrong!'
+                });
+            });
+        }
+    },
+    mounted() {
     }
+}
 </script>

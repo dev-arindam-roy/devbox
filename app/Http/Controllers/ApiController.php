@@ -10,7 +10,11 @@ use App\Models\PostBoxes;
 use App\Models\SubTask;
 use App\Models\Task;
 use App\Models\Note;
+use App\Models\User;
 use Carbon\Carbon;
+use Session;
+use Auth;
+use Hash;
 
 class ApiController extends Controller
 {
@@ -892,6 +896,114 @@ class ApiController extends Controller
             $responseArr['msg'] = "Notes has been deleted successfully";
             $responseArr['content'] = [];
         }
+        return response()->json($responseArr, 200);
+    }
+
+    // Auth
+    public function signUp(Request $request)
+    {
+        $rules = [
+            'name' => ['required'],
+            'email' => ['bail', 'required', 'email', 'unique:users'],
+            'username' => ['bail', 'required', 'unique:users'],
+            'password' => ['required', 'min:8'],
+        ];
+        $messages = [
+            'name.required' => 'Name is required',
+            'email.required' => 'Email is required',
+            'email.email' => 'Please enter valid email',
+            'email.unique' => 'Email already exist, try another',
+            'username.required' => 'Username is required',
+            'username.unique' => 'Username already exist, try another',
+            'password.required' => 'Password is required'
+        ];
+        $validation = $this->checkInputValidation($request->all(), $rules, $messages);
+        if (!empty($validation)) {
+            return response()->json($validation, $validation['status']);
+        }
+
+        $responseArr = [];
+
+        $user = new User;
+        $user->name = $request->input('name');
+        $user->email = $request->input('email');
+        $user->username = $request->input('username');
+        $user->password = Hash::make($request->input('password'));
+        $user->save();
+        $responseArr['status'] = 200;
+        $responseArr['type'] = 'success';
+        $responseArr['msg'] = 'Account has been created successfully';
+        $responseArr['content'] = [
+            'user' => $user
+        ];
+        return response()->json($responseArr, 200);
+    }
+
+    public function signIn(Request $request)
+    {
+        $rules = [
+            'userNameEmail' => ['required'],
+            'password' => ['required'],
+        ];
+        $messages = [
+            'userNameEmail.required' => 'Username or Email is required',
+            'password.required' => 'Password is required'
+        ];
+        $validation = $this->checkInputValidation($request->all(), $rules, $messages);
+        if (!empty($validation)) {
+            return response()->json($validation, $validation['status']);
+        }
+
+        $requestData = $request->all();
+        $responseArr = [];
+
+        $isLoginSuccess = false;
+        if (Auth::attempt(['email' => $requestData['userNameEmail'], 'password' => $requestData['password']])) {
+            $isLoginSuccess = true;
+        }
+        if (!$isLoginSuccess && Auth::attempt(['username' => $requestData['userNameEmail'], 'password' => $requestData['password']])) {
+            $isLoginSuccess = true;
+        }
+        
+        $responseArr['status'] = 200;
+        if (!$isLoginSuccess) {
+            $responseArr['type'] = 'error';
+            $responseArr['msg'] = 'Invalid login credentials';
+            $responseArr['content'] = [];
+            return response()->json($responseArr, 200);
+        }
+
+        $responseArr['type'] = 'success';
+        $responseArr['msg'] = 'Hi, ' . Auth::user()->name . ' - welcome to your account';
+        $responseArr['content'] = [
+            'user' => Auth::user()
+        ];
+        return response()->json($responseArr, 200);
+    }
+
+    public function checkAuth(Request $request)
+    {
+        $responseArr = [];
+        $responseArr['status'] = 401;
+        $responseArr['content'] = [];
+        if (Auth::check()) {
+            $responseArr['status'] = 200;
+            $responseArr['content'] = [
+                'user' => Auth::user()
+            ];
+        }
+        return response()->json($responseArr, $responseArr['status']);
+    }
+
+    public function signOut(Request $request)
+    {
+        Auth::logout();
+        Session::flush();
+        $responseArr = [];
+        $responseArr['status'] = 200;
+        $responseArr['type'] = 'success';
+        $responseArr['msg'] = 'Successfully signout from your account';
+        $responseArr['content'] = [];
         return response()->json($responseArr, 200);
     }
 

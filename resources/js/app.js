@@ -100,6 +100,10 @@ Vue.prototype.$noteStatusList = [
 ];
 // end global constant define
 
+import VueCookies from 'vue-cookies'
+Vue.use(VueCookies)
+Vue.$cookies.config('30d')
+
 /* ============================================================================ */
 
 /**
@@ -112,6 +116,8 @@ Vue.prototype.$noteStatusList = [
 
 // const files = require.context('./', true, /\.vue$/i)
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
+
+Vue.prototype.$isLoggedInUser = false;
 
 // import routes
 import webRoutes from './routes/route';
@@ -128,7 +134,6 @@ Vue.component('page-loader', require('./components/pageLoadingComponent.vue').de
  * the page. Then, you may begin adding components to this application
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
-
 const app = new Vue({
     data() {
         return {
@@ -140,7 +145,9 @@ const app = new Vue({
                 taskCount: 0,
                 noteCount: 0,
                 blogCount: 0
-            }
+            },
+            isUserLoggedIn: false,
+            appUserInfo: []
         }
     },
     components: {
@@ -160,10 +167,37 @@ const app = new Vue({
                     message:'Something went wrong!'
                 });
             });
+        },
+        async checkAuth() {
+            var _this = this;
+            axios.post('/auth/checkAuth').then(response => {
+                if (response.data.status == 200) {
+                    _this.isUserLoggedIn = true;
+                    _this.appUserInfo = response.data.content.user;
+                    Vue.prototype.$isLoggedInUser = true;
+                }
+            }).catch(function (error) {
+                if (error.response.status === 401) {
+                    _this.$toast.error({
+                        title:'Unauthorized Access',
+                        message:'Something went wrong!'
+                    });
+                    _this.$router.push({path: '/'})
+                } else {
+                    _this.$toast.error({
+                        title:'System Error',
+                        message:'Something went wrong!'
+                    });
+                }
+                
+            });
         }
     },
     mounted() {
-        this.getCounts();
+        if (this.$route.name != 'loginRoute' && this.$route.name != 'registrationRoute') {
+            this.getCounts();
+            this.checkAuth();
+        }
     },
     el: '#app',
     router: webRoutes

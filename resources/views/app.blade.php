@@ -7,8 +7,30 @@
         <link rel="icon" href="/images/devbox_fav.png" type="image/png" sizes="16x16">
         <title>DevBox</title>
         <style>
-            [v-cloak] {
-                display: none !important;
+            [v-cloak] .v-cloak--block {
+                display: block!important;
+            }
+
+            [v-cloak] .v-cloak--inline {
+                display: inline!important;
+            }
+
+            [v-cloak] .v-cloak--inlineBlock {
+                display: inline-block!important;
+            }
+
+            [v-cloak] .v-cloak--hidden {
+                display: none!important;
+            }
+
+            [v-cloak] .v-cloak--invisible {
+                visibility: hidden!important;
+            }
+
+            .v-cloak--block,
+            .v-cloak--inline,
+            .v-cloak--inlineBlock {
+                display: none!important;
             }
         </style>
         <link rel="stylesheet" href="{{ mix('css/app.css') }}">
@@ -17,10 +39,14 @@
     </head>
     <body>
         <div id="app" v-cloak>
+
             <page-loader :is-Page-Loading="isPageLoadingActive"></page-loader>
+            
             <header-navmenu class="mb-3"></header-navmenu>
+            
             <div class="container mb-5">
-                <div class="row">
+                @if(Auth::check())
+                <div class="row" v-show="$root.isUserLoggedIn">
                     <div class="col-md-3">
                         <myoption-navmenu class="mb-3"
                             :post-box-count="sidebarCount.postBoxCount"
@@ -35,6 +61,15 @@
                         <!-- <router-view name="boxpost"></router-view> -->
                     </div>
                 </div>
+                @else
+                <div class="row" v-show="!$root.isUserLoggedIn">
+                    <div class="col-md-3"></div>
+                    <div class="col-md-6">
+                        <router-view :key="$route.path"></router-view>
+                    </div>
+                    <div class="col-md-3"></div>
+                </div>
+                @endif
             </div>
         </div>
         <script src="{{ mix('js/app.js') }}"></script>

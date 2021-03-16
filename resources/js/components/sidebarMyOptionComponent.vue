@@ -1,12 +1,17 @@
 <template>
     <div id="MyOption">
         <div class="list-group mb-3">
+            <router-link :to="{name: 'dashboardRoute'}" class="list-group-item list-group-item-action text-option-bold"><i class="fas fa-tachometer-alt"></i> Dashboard</router-link>
             <router-link :to="{name: 'homeRoute'}" class="list-group-item list-group-item-action text-option-bold"><i class="fas fa-home"></i> Home</router-link>
+        </div>
+        <div class="list-group mb-3">
             <router-link :to="{name : 'addBlogRoute'}" class="list-group-item list-group-item-action text-option-bold"><i class="far fa-plus-square"></i> Add Blog</router-link>
             <router-link :to="{name : 'addBoxRoute'}" class="list-group-item list-group-item-action text-option-bold"><i class="far fa-plus-square"></i> Add PostBox</router-link>
-            <router-link :to="{name : 'addCategoryRoute'}" class="list-group-item list-group-item-action text-option-bold"><i class="far fa-plus-square"></i> Add Category</router-link>
+            <router-link :to="{name : 'addNoteRoute'}" class="list-group-item list-group-item-action text-option-bold"><i class="far fa-plus-square"></i> Add Note</router-link>
+            <router-link :to="{name : 'addTaskRoute'}" class="list-group-item list-group-item-action text-option-bold"><i class="far fa-plus-square"></i> Add Task</router-link>
         </div>
         <div class="list-group">
+            <router-link :to="{name : 'snippetRoute'}" class="list-group-item list-group-item-action text-option-bold"><i class="fas fa-list"></i> My Snippets <span class="badge badge-primary navbg badge-pill float-right" v-text="$props.postBoxCount"></span></router-link>
             <router-link :to="{name : 'myPostBoxesRoute'}" class="list-group-item list-group-item-action text-option-bold"><i class="fas fa-list"></i> Post Boxes <span class="badge badge-primary navbg badge-pill float-right" v-text="$props.postBoxCount"></span></router-link>
             <router-link :to="{name : 'myCategoryListRoute'}" class="list-group-item list-group-item-action text-option-bold"><i class="fas fa-list"></i> Categories <span class="badge badge-primary navbg badge-pill float-right" v-text="$props.categoryCount"></span></router-link>
             <router-link :to="{name : 'myKeywordListRoute'}" class="list-group-item list-group-item-action text-option-bold"><i class="fas fa-list"></i> Keywords <span class="badge badge-primary navbg badge-pill float-right" v-text="$props.keywordCount"></span></router-link>

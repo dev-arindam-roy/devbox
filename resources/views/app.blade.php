@@ -46,7 +46,7 @@
             
             <div class="container mb-5">
                 @if(Auth::check())
-                <div class="row" v-show="$root.isUserLoggedIn">
+                <div class="row" v-if="$root.isUserLoggedIn && !$isFullPageLayout">
                     <div class="col-md-3">
                         <myoption-navmenu class="mb-3"
                             :post-box-count="sidebarCount.postBoxCount"
@@ -61,18 +61,24 @@
                         <!-- <router-view name="boxpost"></router-view> -->
                     </div>
                 </div>
-                @else
-                <div class="row" v-show="!$root.isUserLoggedIn">
-                    <div class="col-md-3"></div>
-                    <div class="col-md-6">
+                <div v-else>
+                    <div class="col-md-12">
                         <router-view :key="$route.path"></router-view>
                     </div>
-                    <div class="col-md-3"></div>
+                </div>
+                @else
+                <div class="row" v-show="!$root.isUserLoggedIn">
+                    <div class="col-md-12">
+                        <router-view :key="$route.path"></router-view>
+                    </div>
                 </div>
                 @endif
             </div>
         </div>
         <script src="{{ mix('js/app.js') }}"></script>
         <script src="{{ mix('js/custom.js') }}"></script>
+        <script type="text/javascript">
+            //window.onbeforeunload = function () {return false;}
+        </script>
     </body>
 </html>

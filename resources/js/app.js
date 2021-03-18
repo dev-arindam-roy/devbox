@@ -134,10 +134,21 @@ Vue.component('page-loader', require('./components/pageLoadingComponent.vue').de
  * the page. Then, you may begin adding components to this application
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
+ Vue.prototype.$excludeAuthCheckRoute = [
+    'loginRoute',
+    'registrationRoute'
+]
+
+Vue.prototype.$outPageRoute = [
+    'rootRoute'
+]
+
+Vue.prototype.$isFullPageLayout = false;
+
 const app = new Vue({
     data() {
         return {
-            isPageLoadingActive: false,
+            isPageLoadingActive: true,
             sidebarCount: {
                 postBoxCount: 0,
                 categoryCount: 0,
@@ -171,18 +182,25 @@ const app = new Vue({
         async checkAuth() {
             var _this = this;
             axios.post('/auth/checkAuth').then(response => {
+                _this.isPageLoadingActive = false;
                 if (response.data.status == 200) {
                     _this.isUserLoggedIn = true;
                     _this.appUserInfo = response.data.content.user;
                     Vue.prototype.$isLoggedInUser = true;
+                    if (Vue.prototype.$excludeAuthCheckRoute.includes(_this.$route.name)) {
+                        _this.$router.push({name: 'dashboardRoute'})
+                    }
                 }
             }).catch(function (error) {
+                _this.isPageLoadingActive = false;
                 if (error.response.status === 401) {
-                    _this.$toast.error({
-                        title:'Unauthorized Access',
-                        message:'Something went wrong!'
-                    });
-                    _this.$router.push({path: '/'})
+                    if (!Vue.prototype.$excludeAuthCheckRoute.includes(_this.$route.name) && !Vue.prototype.$outPageRoute.includes(_this.$route.name)) {
+                        _this.$toast.error({
+                            title:'Unauthorized Access',
+                            message:'Something went wrong!'
+                        });
+                        _this.$router.push({path: '/'})
+                    }
                 } else {
                     _this.$toast.error({
                         title:'System Error',
@@ -194,9 +212,10 @@ const app = new Vue({
         }
     },
     mounted() {
-        if (this.$route.name != 'loginRoute' && this.$route.name != 'registrationRoute') {
-            this.getCounts();
-            this.checkAuth();
+        this.getCounts();
+        this.checkAuth();
+        if (Vue.prototype.$outPageRoute.includes(this.$route.name)) {
+            Vue.prototype.$isFullPageLayout = true;
         }
     },
     el: '#app',

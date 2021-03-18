@@ -15,6 +15,7 @@ use Carbon\Carbon;
 use Session;
 use Auth;
 use Hash;
+use Image;
 
 class ApiController extends Controller
 {
@@ -1004,6 +1005,181 @@ class ApiController extends Controller
         $responseArr['type'] = 'success';
         $responseArr['msg'] = 'Successfully signout from your account';
         $responseArr['content'] = [];
+        return response()->json($responseArr, 200);
+    }
+
+    // My Account
+    public function changePassword(Request $request)
+    {
+        $rules = [
+            'currentPassword' => ['required'],
+            'newPassword' => ['bail', 'required', 'min:8'],
+            'confirmPassword' => ['required', 'same:newPassword'],
+        ];
+        $messages = [
+            'currentPassword.required' => 'Current password is required',
+            'newPassword.required' => 'New password is required',
+            'confirmPassword.required' => 'Confirm password is required',
+            'confirmPassword.same' => 'Confirm password not match'
+        ];
+        $validation = $this->checkInputValidation($request->all(), $rules, $messages);
+        if (!empty($validation)) {
+            return response()->json($validation, $validation['status']);
+        }
+
+        $responseArr = [];
+        $responseArr['status'] = 200;
+        
+        $user = User::find(Auth::user()->id);
+
+        if (Hash::check($request->input('newPassword'), $user->password)) {
+            $responseArr['type'] = 'error';
+            $responseArr['msg'] = 'Sorry! Current password not match';
+            $responseArr['content'] = [];
+            return response()->json($responseArr, 200);
+        }
+
+        $user->password = Hash::make($request->input('newPassword'));
+        $user->save();
+        
+        $responseArr['type'] = 'success';
+        $responseArr['msg'] = 'Account password has been changed successfully';
+        $responseArr['content'] = [];
+        return response()->json($responseArr, 200);
+    }
+
+    public function changeUsername(Request $request)
+    {
+        $rules = [
+            'username' => ['bail', 'required' ],
+        ];
+        $messages = [
+            'username.required' => 'Username is required'
+        ];
+        $validation = $this->checkInputValidation($request->all(), $rules, $messages);
+        if (!empty($validation)) {
+            return response()->json($validation, $validation['status']);
+        }
+
+        $responseArr = [];
+        $responseArr['status'] = 200;
+        
+        $ckUsernameisExist = User::where('username', $request->input('username'))->where('id', '!=', Auth::user()->id)->exists();
+        if ($ckUsernameisExist) {
+            $responseArr['type'] = 'error';
+            $responseArr['msg'] = 'Sorry! Username already exist';
+            $responseArr['content'] = [];
+            return response()->json($responseArr, 200);
+        }
+        $user = User::find(Auth::user()->id);
+        $user->username = $request->input('username');
+        $user->save();
+        
+        $responseArr['type'] = 'success';
+        $responseArr['msg'] = 'Username has been changed successfully';
+        $responseArr['content'] = [];
+        return response()->json($responseArr, 200);
+    }
+
+    public function changeEmail(Request $request)
+    {
+        $rules = [
+            'email' => ['bail', 'required', 'email'],
+        ];
+        $messages = [
+            'email.required' => 'Email is required',
+            'email.email' => 'Please enter valid email',
+        ];
+        $validation = $this->checkInputValidation($request->all(), $rules, $messages);
+        if (!empty($validation)) {
+            return response()->json($validation, $validation['status']);
+        }
+
+        $responseArr = [];
+        $responseArr['status'] = 200;
+        
+        $ckEmailExist = User::where('email', $request->input('email'))->where('id', '!=', Auth::user()->id)->exists();
+        if ($ckEmailExist) {
+            $responseArr['type'] = 'error';
+            $responseArr['msg'] = 'Sorry! Email-id already exist';
+            $responseArr['content'] = [];
+            return response()->json($responseArr, 200);
+        }
+        $user = User::find(Auth::user()->id);
+        $user->email = $request->input('email');
+        $user->save();
+        
+        $responseArr['type'] = 'success';
+        $responseArr['msg'] = 'Email-id has been changed successfully';
+        $responseArr['content'] = [];
+        return response()->json($responseArr, 200);
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $rules = [
+            'name' => ['required'],
+            'avatar' => ['bail', 'image', 'mimes:jpeg,jpg,png', 'dimensions:min_width=300,min_height=180', 'max:1024'],
+        ];
+        $messages = [
+            'name.required' => 'Name is required',
+        ];
+        $validation = $this->checkInputValidation($request->all(), $rules, $messages);
+        if (!empty($validation)) {
+            return response()->json($validation, $validation['status']);
+        }
+
+        $responseArr = [];
+        $responseArr['status'] = 200;
+
+        $user = User::find(Auth::user()->id);
+        $user->name = $request->input('name');
+        $user->mobile_number = $request->input('mobile_number') ?? '';
+        $user->address = $request->input('address') ?? '';
+        $user->sex = $request->input('sex') ?? '';
+
+        if  ($request->hasFile('avatar')) {
+            $img = $request->file('avatar');
+            $real_path = $img->getRealPath();
+            $file_orgname = $img->getClientOriginalName();
+            $file_size = $img->getSize();
+            $file_ext = strtolower($img->getClientOriginalExtension());
+            $file_newname = "creative_syntax_product" . "_" . md5(microtime(TRUE) . rand(123, 999)) . "." . $file_ext;
+
+            $destinationPath = public_path('/uploads');
+            $thumb_path = $destinationPath."/thumb";
+            
+            $imgObj = Image::make($real_path);
+            $imgObj->resize(150, NULL, function ($constraint) {
+                $constraint->aspectRatio();
+            })->save($thumb_path . '/' . $file_newname);
+
+            $img->move($destinationPath, $file_newname);
+            $user->profile_image = $file_newname;
+        }
+
+        $user->save();
+
+        $responseArr['type'] = 'success';
+        $responseArr['msg'] = 'Profile has been updated successfully';
+        $responseArr['content'] = [
+            'user' => $user
+        ];
+        return response()->json($responseArr, 200);
+    }
+
+    public function deleteProfileImage(Request $request)
+    {
+        $user = User::find(Auth::user()->id);
+        $user->profile_image = null;
+        $user->save();
+        $responseArr = [];
+        $responseArr['status'] = 200;
+        $responseArr['type'] = 'success';
+        $responseArr['msg'] = 'Profile image has been removed successfully';
+        $responseArr['content'] = [
+            'user' => $user
+        ];
         return response()->json($responseArr, 200);
     }
 

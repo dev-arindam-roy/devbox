@@ -1,51 +1,57 @@
 <template>
     <form @submit.prevent="loginSubmit" autocomplete="off">
         <div class="row">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <span class="box-title"><i class="fas fa-sign-in-alt"></i> Login</span>
-                            </div>
-                            <div class="col-md-6 text-right">
-                                
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <validationErrorComponent :validationErrorListArr="validationErrors"></validationErrorComponent>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label class="form-lebel">Username / Email: <em>*</em></label>
-                                    <input type="text" v-model.trim="userNameEmail" class="form-control" placeholder="Username or Email" autocomplete="off">
-                                    <div class="text-danger" v-if="!$v.userNameEmail.required && $v.userNameEmail.$error">Please enter Username or Email</div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-lebel">Password: <em>*</em></label>
-                                    <input type="password" v-model.trim="password" class="form-control" placeholder="Password" autocomplete="off">
-                                    <div class="text-danger" v-if="!$v.password.required && $v.password.$error">Please enter password</div>
-                                </div>
-                                <div class="form-group">
-                                    <input type="checkbox" v-model.trim="rememberMe">
-                                    <label class="form-lebel">Remember Me</label>
+            <div class="col-md-3"></div>
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <span class="box-title"><i class="fas fa-sign-in-alt"></i> Login</span>
+                                    </div>
+                                    <div class="col-md-6 text-right">
+                                        
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <button type="submit" class="btn btn-success">Login</button>
+                            <div class="card-body">
+                                <validationErrorComponent :validationErrorListArr="validationErrors"></validationErrorComponent>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label class="form-lebel">Username / Email: <em>*</em></label>
+                                            <input type="text" v-model.trim="userNameEmail" class="form-control" placeholder="Username or Email" autocomplete="off">
+                                            <div class="text-danger" v-if="!$v.userNameEmail.required && $v.userNameEmail.$error">Please enter Username or Email</div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-lebel">Password: <em>*</em></label>
+                                            <input type="password" v-model.trim="password" class="form-control" placeholder="Password" autocomplete="off">
+                                            <div class="text-danger" v-if="!$v.password.required && $v.password.$error">Please enter password</div>
+                                        </div>
+                                        <div class="form-group">
+                                            <input type="checkbox" v-model.trim="rememberMe">
+                                            <label class="form-lebel">Remember Me</label>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="col-md-6 text-right">
-                                <router-link :to="{name: 'registrationRoute'}" class="btn btn-primary navbg">Create Account</router-link>
+                            <div class="card-footer">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <button type="submit" class="btn btn-success">Login</button>
+                                    </div>
+                                    <div class="col-md-6 text-right">
+                                        <router-link :to="{name: 'registrationRoute'}" class="btn btn-primary navbg">Create Account</router-link>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+            <div class="col-md-3"></div>
         </div>
     </form>
 </template>

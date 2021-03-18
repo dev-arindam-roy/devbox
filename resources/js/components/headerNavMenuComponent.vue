@@ -1,6 +1,6 @@
 <template>
     <nav class="navbar navbar-expand-lg navbar-dark navbg">
-        <router-link class="navbar-brand" :to="{name: 'homeRoute'}">
+        <router-link class="navbar-brand" :to="{name: 'rootRoute'}">
             <img src="/images/devbox_64.png" style="width:32px;">
             <span><strong>DevBox</strong></span>
         </router-link>
@@ -21,9 +21,11 @@
                 </li>
             </ul>
             <ul class="navbar-nav ml-auto" v-show="!$root.isUserLoggedIn">
-                <li class="nav-item">
-                    <router-link class="nav-link" :to="{name: 'loginRoute'}" v-show="$route.name == 'registrationRoute'">Login</router-link>
-                    <router-link class="nav-link" :to="{name: 'registrationRoute'}" v-show="$route.name == 'loginRoute'">Create Account</router-link>
+                <li class="nav-item" v-show="$route.name == 'registrationRoute' || $route.name == 'rootRoute'">
+                    <router-link class="nav-link" :to="{name: 'loginRoute'}">Login</router-link>
+                </li>
+                <li class="nav-item" v-show="$route.name == 'loginRoute'  || $route.name == 'rootRoute'">
+                    <router-link class="nav-link" :to="{name: 'registrationRoute'}">Create Account</router-link>
                 </li>
             </ul>
         </div>

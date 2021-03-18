@@ -69,7 +69,7 @@
                                         <textarea v-model.trim="subTask.description" class="form-control" placeholder="SubTask Description"></textarea>
                                     </div>
                                      <!-- edit time add subtask status -->
-                                    <div class="form-group" v-if="$route.params.id != undefined && subTask.id != undefined">
+                                    <div class="form-group" v-if="$route.params.id != undefined && subTask.id != undefined && taskStatus > 0">
                                         <select v-model.trim="subTask.status" class="sele-dropdown" v-on:change="changeSubTaskStatus(subTask, $event)" v-bind:class="{'bg-primary' : subTask.status == 2, 'bg-success' : subTask.status == 1, 'bg-warning' : subTask.status == 3, 'bg-danger' : subTask.status == 4}">
                                             <option v-for="sts in taskStatusList" :key="sts.id" :value="sts.id" :disabled="sts.id == 0">{{sts.name}}</option>
                                         </select>

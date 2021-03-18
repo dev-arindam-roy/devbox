@@ -14,6 +14,7 @@ use App\Http\Controllers\ApiController;
 |
 */
 
+
 // AUTH
 Route::name('appAuth.')->group(function () {
     Route::group(['prefix' => 'auth'], function() {
@@ -21,6 +22,17 @@ Route::name('appAuth.')->group(function () {
         Route::post('/signin', [ApiController::class, 'signIn'])->name('signIn');
         Route::post('/signout', [ApiController::class, 'signOut'])->name('signOut');
         Route::post('/checkAuth', [ApiController::class, 'checkAuth'])->name('checkAuth');
+    });
+});
+
+// MY ACCOUNT
+Route::name('myAccount.')->group(function () {
+    Route::group(['prefix' => 'myAccount'], function() {
+        Route::post('/updateProfile', [ApiController::class, 'updateProfile'])->name('updateProfile');
+        Route::post('/deleteProfileImage', [ApiController::class, 'deleteProfileImage'])->name('deleteProfileImage');
+        Route::post('/changePassword', [ApiController::class, 'changePassword'])->name('changePassword');
+        Route::post('/changeUsername', [ApiController::class, 'changeUsername'])->name('changeUsername');
+        Route::post('/changeEmail', [ApiController::class, 'changeEmail'])->name('changeEmail');
     });
 });
 

@@ -1,70 +1,76 @@
 <template>
     <form id="regFrm" @submit.prevent="signupSubmit" autocomplete="off">
         <div class="row">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <span class="box-title"><i class="fas fa-user-plus"></i> Create Your Account</span>
-                            </div>
-                            <div class="col-md-6 text-right">
-                                
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <validationErrorComponent :validationErrorListArr="validationErrors"></validationErrorComponent>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label class="form-lebel">Name: <em>*</em></label>
-                                    <input type="text" v-model.trim="user.name" class="form-control" placeholder="Name" autocomplete="off">
-                                    <div class="text-danger" v-if="!$v.user.name.required && $v.user.name.$error">Please enter name</div>
-                                    <div class="text-danger" v-if="!$v.user.name.minLength && $v.user.name.required && $v.user.name.$error">Minimum characters 3</div>
-                                    <div class="text-danger" v-if="!$v.user.name.regxAlfaWithSpace && $v.user.name.minLength && $v.user.name.required && $v.user.name.$error">Please enter valid name</div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-lebel">Email: <em>*</em></label>
-                                    <input type="email" v-model.trim="user.email" class="form-control" placeholder="Email" autocomplete="off">
-                                    <div class="text-danger" v-if="!$v.user.email.required && $v.user.email.$error">Please enter email</div>
-                                    <div class="text-danger" v-if="!$v.user.email.regxEmailAddress && $v.user.email.required && $v.user.email.$error">Please enter an valid email</div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-lebel">Username: <em>*</em></label>
-                                    <input type="text" v-model.trim="user.username" class="form-control" placeholder="Username" autocomplete="off">
-                                    <div class="text-danger" v-if="!$v.user.username.required && $v.user.username.$error">Please enter username</div>
-                                    <div class="text-danger" v-if="!$v.user.username.minLength && $v.user.username.required && $v.user.username.$error">Minimum characters 6</div>
-                                    <div class="text-danger" v-if="!$v.user.username.regxAlfaNumericWithOutSpace && $v.user.username.minLength && $v.user.username.required && $v.user.username.$error">Please enter valid username</div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-lebel">Password: <em>*</em></label>
-                                    <input type="password" v-model.trim="user.password" class="form-control" placeholder="Password" autocomplete="off">
-                                    <div class="text-danger" v-if="!$v.user.password.required && $v.user.password.$error">Please enter password</div>
-                                    <div class="text-danger" v-if="!$v.user.password.minLength && $v.user.password.required && $v.user.password.$error">Minimum length 8</div>
-                                    <div class="text-danger" v-if="!$v.user.password.regxPassword && $v.user.password.minLength && $v.user.password.required && $v.user.password.$error">Please enter a strong password</div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-lebel">Confirm Password: <em>*</em></label>
-                                    <input type="password" v-model.trim="user.confirmPassword" class="form-control" placeholder="Confirm Password" autocomplete="off">
-                                    <div class="text-danger" v-if="!$v.user.confirmPassword.required && $v.user.confirmPassword.$error">Please enter confirm password</div>
-                                    <div class="text-danger" v-if="!$v.user.confirmPassword.sameAs && $v.user.confirmPassword.required && $v.user.confirmPassword.$error">Confirm password not match</div>
+            <div class="col-md-3"></div>
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <span class="box-title"><i class="fas fa-user-plus"></i> Create Your Account</span>
+                                    </div>
+                                    <div class="col-md-6 text-right">
+                                        
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <button type="submit" class="btn btn-success">Create Account</button>
+                            <div class="card-body">
+                                <validationErrorComponent :validationErrorListArr="validationErrors"></validationErrorComponent>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label class="form-lebel">Name: <em>*</em></label>
+                                            <input type="text" v-model.trim="user.name" class="form-control" placeholder="Name" autocomplete="off">
+                                            <div class="text-danger" v-if="!$v.user.name.required && $v.user.name.$error">Please enter name</div>
+                                            <div class="text-danger" v-if="!$v.user.name.minLength && $v.user.name.required && $v.user.name.$error">Minimum characters 3</div>
+                                            <div class="text-danger" v-if="!$v.user.name.regxAlfaWithSpace && $v.user.name.minLength && $v.user.name.required && $v.user.name.$error">Please enter valid name</div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-lebel">Email: <em>*</em></label>
+                                            <input type="email" v-model.trim="user.email" class="form-control" placeholder="Email" autocomplete="off">
+                                            <div class="text-danger" v-if="!$v.user.email.required && $v.user.email.$error">Please enter email</div>
+                                            <div class="text-danger" v-if="!$v.user.email.regxEmailAddress && $v.user.email.required && $v.user.email.$error">Please enter an valid email</div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-lebel">Username: <em>*</em></label>
+                                            <input type="text" v-model.trim="user.username" class="form-control" placeholder="Username" autocomplete="off">
+                                            <div class="text-danger" v-if="!$v.user.username.required && $v.user.username.$error">Please enter username</div>
+                                            <div class="text-danger" v-if="!$v.user.username.minLength && $v.user.username.required && $v.user.username.$error">Minimum characters 6</div>
+                                            <div class="text-danger" v-if="!$v.user.username.regxAlfaNumericWithOutSpace && $v.user.username.minLength && $v.user.username.required && $v.user.username.$error">Please enter valid username</div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-lebel">Password: <em>*</em></label>
+                                            <input type="password" v-model.trim="user.password" class="form-control" placeholder="Password" autocomplete="off">
+                                            <div class="text-danger" v-if="!$v.user.password.required && $v.user.password.$error">Please enter password</div>
+                                            <div class="text-danger" v-if="!$v.user.password.minLength && $v.user.password.required && $v.user.password.$error">Minimum length 8</div>
+                                            <div class="text-danger" v-if="!$v.user.password.regxPassword && $v.user.password.minLength && $v.user.password.required && $v.user.password.$error">Please enter a strong password</div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-lebel">Confirm Password: <em>*</em></label>
+                                            <input type="password" v-model.trim="user.confirmPassword" class="form-control" placeholder="Confirm Password" autocomplete="off">
+                                            <div class="text-danger" v-if="!$v.user.confirmPassword.required && $v.user.confirmPassword.$error">Please enter confirm password</div>
+                                            <div class="text-danger" v-if="!$v.user.confirmPassword.sameAs && $v.user.confirmPassword.required && $v.user.confirmPassword.$error">Confirm password not match</div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="col-md-6 text-right">
-                                <router-link :to="{name: 'loginRoute'}" class="btn btn-primary navbg">Login</router-link>
+                            <div class="card-footer">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <button type="submit" class="btn btn-success">Create Account</button>
+                                    </div>
+                                    <div class="col-md-6 text-right">
+                                        <router-link :to="{name: 'loginRoute'}" class="btn btn-primary navbg">Login</router-link>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+            <div class="col-md-3"></div>
         </div>
     </form>
 </template>

@@ -3,10 +3,17 @@ import VueRouter from 'vue-router';
 
 Vue.use(VueRouter);
 
+import _rootAppComponent from '../components/pages/rootAppComponent.vue'
+
 import _loginComponent from '../components/pages/loginComponent.vue'
 import _registrationComponent from '../components/pages/registrationComponent.vue'
 
 import _authInProgressComponent from '../components/pages/authInProgressComponent.vue'
+
+import _editProfileComponent from '../components/pages/editProfileComponent.vue'
+import _changePasswordComponent from '../components/pages/changePasswordComponent.vue'
+import _changeUsernameComponent from '../components/pages/changeUsernameComponent.vue'
+import _changeEmailComponent from '../components/pages/changeEmailComponent.vue'
 
 import _dashboardComponent from '../components/pages/dashboardComponent.vue'
 import _homeComponent from '../components/pages/homeComponent.vue'
@@ -45,6 +52,11 @@ const webRoutes = new VueRouter({
     routes: [
         {
             path: '/',
+            component: _rootAppComponent,
+            name: 'rootRoute',
+        },
+        {
+            path: '/login',
             component: _loginComponent,
             name: 'loginRoute',
         },
@@ -75,6 +87,26 @@ const webRoutes = new VueRouter({
             path: '/my-account',
             component: _myAccountComponent,
             name: 'myAccountRoute'
+        },
+        {
+            path: '/my-account/edit-profile',
+            component: _editProfileComponent,
+            name: 'editProfileRoute'
+        },
+        {
+            path: '/my-account/change-password',
+            component: _changePasswordComponent,
+            name: 'changePasswordRoute'
+        },
+        {
+            path: '/my-account/change-username',
+            component: _changeUsernameComponent,
+            name: 'changeUsernameRoute'
+        },
+        {
+            path: '/my-account/change-email',
+            component: _changeEmailComponent,
+            name: 'changeEmailRoute'
         },
 
 
@@ -266,6 +298,12 @@ webRoutes.beforeEach((to, from, next) => {
     // if (to.matched.some(record => record.meta.requiredAuth)) {
     //     console.log(Vue.prototype.$isLoggedInUser);
     // }
+    if (!Vue.prototype.$outPageRoute.includes(to.name)) {
+        Vue.prototype.$isFullPageLayout = false;
+    }
+    if (Vue.prototype.$outPageRoute.includes(to.name)) {
+        Vue.prototype.$isFullPageLayout = true;
+    }
     next();
 });
 
